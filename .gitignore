@@ -1,0 +1,38 @@
+# env variable 환경변수
+.env
+
+# compiled output 컴파일로 인한 파일
+/dist
+/node_modules
+
+# Logs 로그파일
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests 테스트 도구가 생성하는 파일
+/coverage
+/.nyc_output
+
+# IDEs and editors IDE가 생성하는 파일
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
