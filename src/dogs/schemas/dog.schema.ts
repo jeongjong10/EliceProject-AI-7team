@@ -6,7 +6,7 @@ import { DogBreeds } from './dogbreeds.shema';
 export type DogDocument = HydratedDocument<Dog>;
 
 // 스케마 정의 데코레이터
-@Schema()
+@Schema({ timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' } })
 export class Dog {
     // 스케마의 property 정의 데코레이터
     @Prop({ required: true })

@@ -11,16 +11,16 @@ dotenv.config();
 // 구현하고 사용하는 모듈(API)들을 등록 한다. (의존성 주입)
 // 데코레이터 : 클래스를 필수 메타데이터와 연결하고, 라우팅 맵을 만들게 한다.
 
-// MongoDB 연결 모듈
-@Module({
-    imports: [MongooseModule.forRoot(process.env.MONGODB_ADDRESS)],
-    // 임포츠 배열에 추가로 다른 DB연결 코드도 작성할 수 있다.
-})
 // 모듈 데코레이터의 imports '배열'에 생성한 모듈을 등록한다.
 // 모듈 데코레이터
 @Module({
     // 구현한 모듈 등록
-    imports: [DogsModule],
+    imports: [
+        // MongoDB 연결 모듈
+        MongooseModule.forRoot(process.env.MONGODB_ADDRESS),
+        // 생성 모듈 추가
+        DogsModule,
+    ],
 
     // 현재 모듈에서 구현한 컨트롤러 등록
     controllers: [AppController],
