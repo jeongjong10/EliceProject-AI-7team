@@ -22,7 +22,7 @@ import { Dog, DogSchema } from './models/dog.schema';
     // 현재 모듈에서 구현한 컨트롤러 등록
     controllers: [DogsController],
 
-    // 현재 모듈에서 구현된 서비스 등록
+    // 현재 모듈에서 구현한 서비스 등록
     providers: [DogsService],
 
     // 현재 모듈의 구성품을 다른 모듈에서 사용하고자 할때, 구성품 명시

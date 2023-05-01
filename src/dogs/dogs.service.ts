@@ -11,12 +11,11 @@ export class DogsService {
 
     // 유기견 전체 목록 조회
     async findDogsList(): Promise<Dog[]> {
-        return await this.dogModel.find({});
+        return await this.dogModel.find();
     }
 
     // 특정 유기견 정보 조회
     async findDog(dogId: String): Promise<Dog> {
-        console.log('dogId : ', dogId);
         return await this.dogModel.findOne({
             id: dogId,
         });
@@ -24,14 +23,15 @@ export class DogsService {
 
     //
     async findMany(findInfo: FindDogDto): Promise<Dog[]> {
-        console.log('findInfo : ', findInfo);
         return await this.dogModel.find({
-            breeds: { $in: [...findInfo.breeds] },
+            // breeds: { $in: [...findInfo.breeds] },
+            sex: findInfo.sex,
+            birth: findInfo.birth,
         });
     }
 
+    // 동물보호관리센터 메인 유기견 데이터 생성 (값 매핑)
     async createMany(createDogDto: CreateDogDto[]): Promise<Dog[]> {
-        console.log('Service : ', createDogDto);
         const createDogs = createDogDto.map((dog) => ({
             id: dog.desertionNo,
             state: dog.processState,
@@ -61,29 +61,3 @@ export class DogsService {
         return await this.dogModel.insertMany(createDogs);
     }
 }
-
-// const createDog = {
-//     id: createDogDto.desertionNo,
-//     state: createDogDto.processState,
-//     img_url: createDogDto.popfile,
-//     found: {
-//         date: createDogDto.happenDt,
-//         place: createDogDto.happenPlace,
-//     },
-//     color: createDogDto.colorCd,
-//     birth: createDogDto.age,
-//     weight: createDogDto.weight,
-//     sex: createDogDto.sexCd,
-//     neuter: createDogDto.neuterYn,
-//     memo: createDogDto.specialMark,
-//     notice: {
-//         code: createDogDto.noticeNo,
-//         date_start: createDogDto.noticeSdt,
-//         date_end: createDogDto.noticeEdt,
-//     },
-//     careCenter: {
-//         name: createDogDto.careNm,
-//         phone: createDogDto.careTel,
-//         address: createDogDto.careAddr,
-//     },
-// };
