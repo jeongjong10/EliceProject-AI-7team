@@ -13,23 +13,23 @@ export class Dog {
     id: String; // 유기번호(desertionNo)
 
     @Prop({ required: true })
-    state: String; // 상태(protectState)
+    state: String; // 상태(processState)
 
     @Prop({ required: true })
-    img: String; // 사진(popfile)
+    img_url: String; // 사진(popfile)
 
     @Prop({
         required: true,
-        type: [{ type: mongoose.Schema.Types.ObjectId }],
+        type: Object,
     })
     found: {
         date: Date; // 접수일(happenDt)
         place: String; // 발견장소(happenPlace)
     };
 
-    // DogBreeds 타입의 breeds 값을 여러개 가지기 위한 정의
-    // 인공지능 모델의 반환값 저장 예정
+    // DogBreeds 타입의 breeds 값을 여러개 가지기 위한 정의, 인공지능 모델의 반환값 저장 예정
     @Prop({
+        index: true,
         required: false,
         type: [
             {
@@ -44,7 +44,7 @@ export class Dog {
     color: String; // 색상(colorCd)
 
     @Prop({ required: true })
-    birth: Date; // 탄생 년도(age)
+    birth: Number; // 탄생 년도(age)
 
     @Prop({ required: true })
     weight: Number; // 체중(weight) (0(미상))
@@ -56,11 +56,11 @@ export class Dog {
     neuter: String; // 중성화 여부(neuterYn) (Y,N,U(미상))
 
     @Prop({ required: false })
-    detail: String; // 특징(specialMark)
+    memo?: String; // 특징(specialMark)
 
     @Prop({
         required: true,
-        type: [{ type: mongoose.Schema.Types.ObjectId }],
+        type: Object,
     })
     notice: {
         code: String; // 공고번호(noticeNo)
@@ -70,7 +70,7 @@ export class Dog {
 
     @Prop({
         required: true,
-        type: [{ type: mongoose.Schema.Types.ObjectId }],
+        type: Object,
     })
     careCenter: {
         name: String; // 보호소 이름(careNm)

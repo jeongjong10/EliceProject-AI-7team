@@ -6,5 +6,10 @@ export type dogBreedsDocument = HydratedDocument<DogBreeds>;
 @Schema()
 export class DogBreeds {
     @Prop()
-    breeds: String;
+    breedName: String;
+
+    @Prop()
+    character: String[];
 }
+
+export const DogBreedsSchema = SchemaFactory.createForClass(DogBreeds);

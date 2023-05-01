@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { DogsService } from './dogs.service';
 import { DogsController } from './dogs.controller';
-import { Dog, DogSchema } from './schemas/dog.schema';
+import { Dog, DogSchema } from './models/dog.schema';
 
 // 구현하고 사용하는 모듈(API)들을 등록 한다. (의존성 주입)
 // 데코레이터 : 클래스를 필수 메타데이터와 연결하고, 라우팅 맵을 만들게 한다.
