@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'; // 네스트 의존성 주입 데�
 import { InjectModel } from '@nestjs/mongoose'; // 몽구스 의존성 주입 데코레이터 임포트
 import { Dog } from './models/dog.schema';
 import { CreateDogDto } from './dto/create-dog.dto';
-import { FindDogDto } from './dto/find-dog.dto';
+import { SearchDogListDto } from './dto/search-doglist.dto';
 
 @Injectable()
 export class DogsService {
@@ -14,19 +14,15 @@ export class DogsService {
         return await this.dogModel.find();
     }
 
+    // 사용자 이미지 검색 유기견 목록 조회
+    async searchDogList(searchInfo: SearchDogListDto): Promise<Dog[]> {
+        return await this.dogModel.find(searchInfo);
+    }
+
     // 특정 유기견 정보 조회
     async findDog(dogId: String): Promise<Dog> {
         return await this.dogModel.findOne({
             id: dogId,
-        });
-    }
-
-    //
-    async findMany(findInfo: FindDogDto): Promise<Dog[]> {
-        return await this.dogModel.find({
-            // breeds: { $in: [...findInfo.breeds] },
-            sex: findInfo.sex,
-            birth: findInfo.birth,
         });
     }
 

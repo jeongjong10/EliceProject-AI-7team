@@ -1,6 +1,6 @@
 import { IsNumber, IsString } from 'class-validator';
 
-export class FindDogDto {
+export class SearchDogListDto {
     @IsString()
     breeds: String[];
 
