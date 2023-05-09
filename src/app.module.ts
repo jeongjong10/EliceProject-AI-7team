@@ -2,15 +2,13 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DogsModule } from './dogs/dogs.module';
+import { AuthModule } from './auth/auth.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 // 응용 프로그램의 루트 모듈
-// app.js 와 같은 메인 파일로써, 프로그램의 시작점이다.
-// 구현하고 사용하는 모듈(API)들을 등록 한다. (의존성 주입)
 // 데코레이터 : 클래스를 필수 메타데이터와 연결하고, 라우팅 맵을 만들게 한다.
 
-// 모듈 데코레이터의 imports '배열'에 생성한 모듈을 등록한다.
 // 모듈 데코레이터
-
 @Module({
     // 구현한 모듈 등록
     imports: [
@@ -29,8 +27,25 @@ import { DogsModule } from './dogs/dogs.module';
             inject: [ConfigService],
         }),
 
+        // PostgreSQL 연결
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: async (config: ConfigService) => ({
+                type: 'postgres',
+                host: config.get('POSTGRESQL_HOST'),
+                port: config.get('POSTGRESQL_PORT'),
+                username: config.get('POSTGRESQL_USERNAME'),
+                password: config.get<number>('POSTGRESQL_PASSWORD'),
+                database: config.get('POSTRESQL_NAME'),
+                entities: [],
+                synchronize: true,
+            }),
+            inject: [ConfigService],
+        }),
+
         // 생성한 모듈 추가
         DogsModule,
+        AuthModule,
     ],
 
     // 현재 모듈에서 구현한 컨트롤러 등록
