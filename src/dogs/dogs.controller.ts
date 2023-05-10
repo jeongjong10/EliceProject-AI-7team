@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Res, Param, Query } from '@nestjs/common';
 import { DogsService } from './dogs.service';
 import { CreateDogDto } from './dto/create-dog.dto';
 import { Dog } from './models/dog.schema';
-import { FindDogDto } from './dto/find-dog.dto';
+import { SearchDogListDto } from './dto/search-doglist.dto';
 
 // 컨트롤러 파일 (라우터)
 
@@ -11,39 +11,47 @@ import { FindDogDto } from './dto/find-dog.dto';
 export class DogsController {
     constructor(private readonly DogsService: DogsService) {}
 
-    // 유기견 전체 목록 조회, 특정 유기견 id 검색 및 조회
+    // 유기견 전체 목록 조회
     @Get('/')
-    async getDogsListController(@Res() res, @Query('id') id: String) {
+    async getDogListController(@Res() res) {
         // (then, cathch문 사용)
-        if (!id) {
-            this.DogsService.findDogsList()
-                .then((dogsList) =>
-                    res.json({
-                        message: '유기견 전체 목록 조회 성공',
-                        data: dogsList,
-                    })
-                )
-                .catch((err) => {
-                    res.json(err);
-                });
-        } else {
-            // async await문 사용
-            const dog: Dog = await this.DogsService.findDog(id);
-            res.json({
-                message: '특정 유기견 정보 조회 성공',
-                data: dog,
+        this.DogsService.findDogsList()
+            .then((dogList) =>
+                res.json({
+                    message: '유기견 전체 목록 조회 성공',
+                    data: dogList,
+                })
+            )
+            .catch((err) => {
+                res.json(err);
             });
-        }
     }
 
-    // 사용자 입력 정보 기반 유기견 정보 조회 (리턴문으로 데이터 반환)
-    @Post()
-    async findDogController(@Body() findDog: FindDogDto) {
-        const foundedDog: Dog[] = await this.DogsService.findMany(findDog);
+    // 사용자 이미지 검색 유기견 목록 조회
+    @Get('/')
+    async searchDogListController(
+        @Res() res,
+        @Query() searchDogListDto: SearchDogListDto
+    ) {
+        // 리턴문으로 반환
+        const searchedDogList = await this.DogsService.searchDogList(
+            searchDogListDto
+        );
         return {
-            message: '사용자 조건에 맞는 유기견 정보 조회 성공',
-            data: foundedDog,
+            message: '사용자 이미지 검색 유기견 목록 조회 성공',
+            data: searchedDogList,
         };
+    }
+
+    // 특정 유기견 id 검색 및 조회
+    @Get('/:id')
+    async getDogController(@Res() res, @Param('id') dog_id: String) {
+        // res로 반환
+        const dog: Dog = await this.DogsService.findDog(dog_id);
+        res.json({
+            message: '특정 유기견 정보 조회 성공',
+            data: dog,
+        });
     }
 
     // 유기견 데이터 입력 (Flask -> Nest)
