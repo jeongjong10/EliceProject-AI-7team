@@ -35,11 +35,12 @@ export class DogsController {
     @Get('/search')
     async searchDogListController(@Query() searchDogListDto: SearchDogListDto) {
         // 리턴문으로 반환
+        console.log(searchDogListDto);
         const searchedDogList = await this.DogsService.searchDogList(
             searchDogListDto
         );
         return {
-            message: `(사용자 검색) 유기견 ${searchDogListDto.limit}개 조회 성공`,
+            message: `(사용자 검색) 유기견 조회 성공`,
             data: searchedDogList,
         };
     }
