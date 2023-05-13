@@ -27,25 +27,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             inject: [ConfigService],
         }),
 
-        // PostgreSQL 연결
-        TypeOrmModule.forRootAsync({
-            imports: [ConfigModule],
-            useFactory: async (config: ConfigService) => ({
-                type: 'postgres',
-                host: config.get('POSTGRESQL_HOST'),
-                port: config.get('POSTGRESQL_PORT'),
-                username: config.get('POSTGRESQL_USERNAME'),
-                password: config.get<number>('POSTGRESQL_PASSWORD'),
-                database: config.get('POSTRESQL_NAME'),
-                entities: [],
-                synchronize: true,
-            }),
-            inject: [ConfigService],
-        }),
+        // // PostgreSQL 연결
+        // TypeOrmModule.forRootAsync({
+        //     imports: [ConfigModule],
+        //     useFactory: async (config: ConfigService) => ({
+        //         type: 'postgres',
+        //         host: config.get('POSTGRESQL_HOST'),
+        //         port: config.get('POSTGRESQL_PORT'),
+        //         username: config.get('POSTGRESQL_USERNAME'),
+        //         password: config.get<number>('POSTGRESQL_PASSWORD'),
+        //         database: config.get('POSTRESQL_NAME'),
+        //         entities: [],
+        //         synchronize: true,
+        //     }),
+        //     inject: [ConfigService],
+        // }),
 
         // 생성한 모듈 추가
         DogsModule,
-        AuthModule,
+        // AuthModule,
     ],
 
     // 현재 모듈에서 구현한 컨트롤러 등록

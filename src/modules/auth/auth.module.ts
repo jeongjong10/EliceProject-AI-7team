@@ -5,7 +5,7 @@ import { DataSource } from 'typeorm';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-    imports: [TypeOrmModule.forFeature(), UsersModule],
+    // imports: [TypeOrmModule.forFeature(), UsersModule],
     controllers: [AuthController],
     providers: [AuthService],
 })

@@ -1,27 +1,26 @@
-import { State } from "src/constants/dog/dog";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { State } from 'src/constants/dog/dog';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class VisitRequest {
     @PrimaryGeneratedColumn()
-    id: number
+    id: number;
+
+    // @Column()
+    // user_id: User.id
+
+    // @Column()
+    // dog_id: Dog.id
 
     @Column()
-    user_id: User.id
+    whenDay?: Date;
 
     @Column()
-	dog_id: Dog.id
-    
-    @Column()
-	whenDay?: Date
+    whenTime?: string;
 
     @Column()
-	whenTime?: string
+    state: State;
 
     @Column()
-	state: State
-
-    @Column()
-	isActive: boolean
-}    
+    isActive: boolean;
 }

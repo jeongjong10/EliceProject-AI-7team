@@ -3,6 +3,7 @@ import { DogsService } from './dogs.service';
 import { CreateDogDto } from './dto/create-dog.dto';
 import { Dog } from './models/dog.schema';
 import { SearchDogListDto } from './dto/search-doglist.dto';
+import { PagenationDogDto } from './dto/pagenation-dog.dto';
 
 // 컨트롤러 파일 (라우터)
 
@@ -13,12 +14,15 @@ export class DogsController {
 
     // 유기견 전체 목록 조회
     @Get('/')
-    async getDogListController(@Res() res) {
+    async getDogListController(
+        @Res() res,
+        @Query() pagenationDogDto: PagenationDogDto
+    ) {
         // (then, cathch문 사용)
-        this.DogsService.findDogsList()
+        this.DogsService.findDogsList(pagenationDogDto)
             .then((dogList) =>
                 res.json({
-                    message: '유기견 전체 목록 조회 성공',
+                    message: `(전체 목록) 유기견 ${pagenationDogDto.limit}개 조회 성공`,
                     data: dogList,
                 })
             )
@@ -28,17 +32,14 @@ export class DogsController {
     }
 
     // 사용자 이미지 검색 유기견 목록 조회
-    @Get('/')
-    async searchDogListController(
-        @Res() res,
-        @Query() searchDogListDto: SearchDogListDto
-    ) {
+    @Get('/search')
+    async searchDogListController(@Query() searchDogListDto: SearchDogListDto) {
         // 리턴문으로 반환
         const searchedDogList = await this.DogsService.searchDogList(
             searchDogListDto
         );
         return {
-            message: '사용자 이미지 검색 유기견 목록 조회 성공',
+            message: `(사용자 검색) 유기견 ${searchDogListDto.limit}개 조회 성공`,
             data: searchedDogList,
         };
     }

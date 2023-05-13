@@ -4,19 +4,29 @@ import { InjectModel } from '@nestjs/mongoose'; // 몽구스 의존성 주입 �
 import { Dog } from './models/dog.schema';
 import { CreateDogDto } from './dto/create-dog.dto';
 import { SearchDogListDto } from './dto/search-doglist.dto';
+import { PagenationDogDto } from './dto/pagenation-dog.dto';
 
 @Injectable()
 export class DogsService {
     constructor(@InjectModel(Dog.name) private dogModel: Model<Dog>) {}
 
     // 유기견 전체 목록 조회
-    async findDogsList(): Promise<Dog[]> {
-        return await this.dogModel.find();
+    async findDogsList(pagenationDogDto: PagenationDogDto): Promise<Dog[]> {
+        const { limit, skip } = pagenationDogDto;
+        return await this.dogModel.find().skip(skip).limit(limit);
     }
 
     // 사용자 이미지 검색 유기견 목록 조회
-    async searchDogList(searchInfo: SearchDogListDto): Promise<Dog[]> {
-        return await this.dogModel.find(searchInfo);
+    async searchDogList(searchDogListDto: SearchDogListDto): Promise<Dog[]> {
+        const { limit, skip } = searchDogListDto;
+        delete searchDogListDto.limit;
+        delete searchDogListDto.skip;
+        delete searchDogListDto.breeds;
+
+        return await this.dogModel
+            .find(searchDogListDto)
+            .skip(skip)
+            .limit(limit);
     }
 
     // 특정 유기견 정보 조회
