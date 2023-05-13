@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose'; // 관계 맺으려니 이렇게 부르네?
+import * as mongoose from 'mongoose';
 import { HydratedDocument } from 'mongoose';
 import { DogBreeds } from './dogbreeds.shema';
 
