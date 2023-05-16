@@ -1,5 +1,5 @@
 import { IsDefined, IsNumber, IsString } from 'class-validator';
-import { PagenationDogDto } from './pagenation-dog.dto';
+import { PagenationDogDto } from './pagenationdog.dto';
 
 export class SearchDogListDto extends PagenationDogDto {
     @IsDefined()

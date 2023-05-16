@@ -9,7 +9,7 @@ export enum Employed {
     NOT,
 }
 
-export enum HASDOG {
+export enum Hasdog {
     ONE,
     MORE,
     NOT,

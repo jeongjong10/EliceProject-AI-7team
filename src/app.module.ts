@@ -3,7 +3,16 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DogsModule } from './modules/dogs/dogs.module';
 import { AuthModule } from './modules/auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { User } from './modules/auth/entities/user.entity';
+import { UnderdogsModule } from './modules/underdogs/underdogs.module';
+import { UnderDogs } from './modules/underdogs/entities/underdog.entity';
+import { Notice } from './modules/underdogs/entities/notice.entity';
+import { CareCeter } from './modules/underdogs/entities/carecenter.entity';
+import { Found } from './modules/underdogs/entities/found.entity';
+import { UserDetail } from './modules/auth/entities/userdetail.entity';
+import { VisitRequest } from './modules/auth/entities/visitrequest.entity';
+import { Breeds } from './modules/underdogs/entities/breeds.entity';
 
 // 응용 프로그램의 루트 모듈
 // 데코레이터 : 클래스를 필수 메타데이터와 연결하고, 라우팅 맵을 만들게 한다.
@@ -27,25 +36,37 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             inject: [ConfigService],
         }),
 
-        // // PostgreSQL 연결
-        // TypeOrmModule.forRootAsync({
-        //     imports: [ConfigModule],
-        //     useFactory: async (config: ConfigService) => ({
-        //         type: 'postgres',
-        //         host: config.get('POSTGRESQL_HOST'),
-        //         port: config.get('POSTGRESQL_PORT'),
-        //         username: config.get('POSTGRESQL_USERNAME'),
-        //         password: config.get<number>('POSTGRESQL_PASSWORD'),
-        //         database: config.get('POSTRESQL_NAME'),
-        //         entities: [],
-        //         synchronize: true,
-        //     }),
-        //     inject: [ConfigService],
-        // }),
+        // PostgreSQL 연결
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            useFactory: async (
+                config: ConfigService
+            ): Promise<TypeOrmModuleOptions> => ({
+                type: 'postgres',
+                host: config.get('POSTGRESQL_HOST'),
+                port: config.get('POSTGRESQL_PORT'),
+                username: config.get('POSTGRESQL_USERNAME'),
+                password: config.get('POSTGRESQL_PASSWORD'),
+                database: config.get('POSTRESQL_DBNAME'),
+                entities: [
+                    UnderDogs,
+                    Breeds,
+                    Notice,
+                    CareCeter,
+                    Found,
+                    User,
+                    UserDetail,
+                    VisitRequest,
+                ],
+                synchronize: true,
+            }),
+            inject: [ConfigService],
+        }),
 
         // 생성한 모듈 추가
         DogsModule,
-        // AuthModule,
+        AuthModule,
+        UnderdogsModule,
     ],
 
     // 현재 모듈에서 구현한 컨트롤러 등록

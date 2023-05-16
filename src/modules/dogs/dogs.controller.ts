@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Res, Param, Query } from '@nestjs/common';
 import { DogsService } from './dogs.service';
-import { CreateDogDto } from './dto/create-dog.dto';
+import { CreateDogDto } from './dto/createdog.dto';
 import { Dog } from './models/dog.schema';
-import { SearchDogListDto } from './dto/search-doglist.dto';
-import { PagenationDogDto } from './dto/pagenation-dog.dto';
+import { SearchDogListDto } from './dto/searchdoglist.dto';
+import { PagenationDogDto } from './dto/pagenationdog.dto';
 
 // 컨트롤러 파일 (라우터)
 
