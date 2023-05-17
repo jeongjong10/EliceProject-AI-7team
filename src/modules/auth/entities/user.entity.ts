@@ -1,4 +1,4 @@
-import { Platform } from 'src/constants/auth/user.enum';
+import { Platform } from '../../../constants/auth/user.enum';
 import {
     Column,
     Entity,

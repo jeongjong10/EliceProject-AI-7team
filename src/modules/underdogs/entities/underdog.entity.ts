@@ -1,9 +1,11 @@
-import { NeuterYn, Sexcd } from 'src/constants/dog/dog';
-import { VisitRequest } from 'src/modules/auth/entities/visitrequest.entity';
+import { NeuterYn, Sexcd } from '../../../constants/dog/dog.enum';
+import { VisitRequest } from '../../auth/entities/visitrequest.entity';
 import {
     Column,
     Entity,
+    Index,
     JoinColumn,
+    JoinTable,
     ManyToMany,
     ManyToOne,
     OneToMany,
@@ -12,11 +14,10 @@ import {
 } from 'typeorm';
 import { CareCeter } from './carecenter.entity';
 import { Notice } from './notice.entity';
-import { Found } from './found.entity';
 import { Breeds } from './breeds.entity';
 
 @Entity({
-    orderBy: {},
+    orderBy: { found_date: 'DESC' }, // 항상 오래된 순으로 검색
 })
 export class UnderDogs {
     @PrimaryColumn({ type: 'varchar' })
@@ -28,16 +29,26 @@ export class UnderDogs {
     @Column({ type: 'varchar' })
     img_url: String; // 사진(popfile)
 
-    // OneToOne
-    @OneToOne(() => Found, {
-        eager: true, // user 로딩시 user_detail도 자동으로 로드
-        orphanedRowAction: 'delete', // user 삭제시 user_detail 삭제
-    })
-    found: Found;
+    @Column({ type: 'date' })
+    found_date: Date; // 접수일(happenDt)
 
-    // ManyToMany
-    @ManyToMany(() => Breeds, {
-        eager: true, // user 로딩시 user_detail도 자동으로 로드
+    @Column({ type: 'date' })
+    found_place: String; // 발견장소(happenPlace)
+
+    // ManyToMany ,Index
+    @ManyToMany(() => Breeds, (breeds) => breeds.underdog, {
+        eager: true,
+    })
+    @JoinTable({
+        name: 'DogBreeds',
+        joinColumn: {
+            name: 'underdog_id',
+            referencedColumnName: 'id',
+        },
+        inverseJoinColumn: {
+            name: 'breeds_id',
+            referencedColumnName: 'id',
+        },
     })
     breeds?: Breeds[];
 
@@ -73,8 +84,10 @@ export class UnderDogs {
     carecenter: CareCeter;
 
     //OneToMany
-    @OneToMany(() => VisitRequest, (visit_request) => visit_request.id)
+    @OneToMany(() => VisitRequest, (visit_request) => visit_request.id, {
+        nullable: true,
+    })
     @JoinColumn()
     // joincolumn 데코레이터를 넣으면 , 데이터 호출시 relation 옵션을 사용해 조인이 가능
-    visit_request: VisitRequest;
+    visit_request?: VisitRequest;
 }

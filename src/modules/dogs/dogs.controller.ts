@@ -1,9 +1,9 @@
 import { Controller, Get, Post, Body, Res, Param, Query } from '@nestjs/common';
 import { DogsService } from './dogs.service';
-import { CreateDogDto } from './dto/createdog.dto';
+// import { CreateDogDto } from '../underdogs/dto/uploaddogs.dto';
 import { Dog } from './models/dog.schema';
-import { SearchDogListDto } from './dto/searchdoglist.dto';
-import { PagenationDogDto } from './dto/pagenationdog.dto';
+import { SearchDogListDto } from '../underdogs/dto/searchdoglist.dto';
+import { PagenationDogDto } from '../underdogs/dto/pagenationdog.dto';
 
 // 컨트롤러 파일 (라우터)
 
@@ -56,17 +56,17 @@ export class DogsController {
         });
     }
 
-    // 유기견 데이터 입력 (Flask -> Nest)
-    @Post('upload')
-    async uploadDataController(
-        @Body() createDogData: CreateDogDto[],
-        @Res() res
-    ) {
-        console.log('Controller : ', createDogData);
-        const createdDog = await this.DogsService.createMany(createDogData);
-        res.json({
-            message: '유기견 데이터 입력 성공',
-            data: createdDog,
-        });
-    }
+    // // 유기견 데이터 입력 (Flask -> Nest)
+    // @Post('upload')
+    // async uploadDataController(
+    //     @Body() createDogData: CreateDogDto[],
+    //     @Res() res
+    // ) {
+    //     console.log('Controller : ', createDogData);
+    //     const createdDog = await this.DogsService.createMany(createDogData);
+    //     res.json({
+    //         message: '유기견 데이터 입력 성공',
+    //         data: createdDog,
+    //     });
+    // }
 }

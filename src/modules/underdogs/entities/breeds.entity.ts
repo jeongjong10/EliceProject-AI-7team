@@ -2,6 +2,7 @@ import {
     Column,
     Entity,
     JoinColumn,
+    JoinTable,
     ManyToMany,
     PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -16,9 +17,8 @@ export class Breeds {
     name: string;
 
     @Column({ type: 'json', nullable: true })
-    charactor: string[];
+    charactor?: string[];
 
-    @ManyToMany(() => UnderDogs)
-    @JoinColumn()
+    @ManyToMany(() => UnderDogs, (underdog) => underdog.breeds)
     underdog?: UnderDogs[];
 }

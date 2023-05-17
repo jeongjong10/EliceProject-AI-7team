@@ -2,9 +2,8 @@ import { Model } from 'mongoose'; // 몽구스 모델 임포트
 import { Injectable } from '@nestjs/common'; // 네스트 의존성 주입 데코레이터 임포트
 import { InjectModel } from '@nestjs/mongoose'; // 몽구스 의존성 주입 데코레이터 임포트
 import { Dog } from './models/dog.schema';
-import { CreateDogDto } from './dto/createdog.dto';
-import { SearchDogListDto } from './dto/searchdoglist.dto';
-import { PagenationDogDto } from './dto/pagenationdog.dto';
+import { SearchDogListDto } from '../underdogs/dto/searchdoglist.dto';
+import { PagenationDogDto } from '../underdogs/dto/pagenationdog.dto';
 
 @Injectable()
 export class DogsService {
@@ -36,34 +35,34 @@ export class DogsService {
         });
     }
 
-    // 동물보호관리센터 메인 유기견 데이터 생성 (값 매핑)
-    async createMany(createDogDto: CreateDogDto[]): Promise<Dog[]> {
-        const createDogs = createDogDto.map((dog) => ({
-            id: dog.desertionNo,
-            state: dog.processState,
-            img_url: dog.popfile,
-            found: {
-                date: dog.happenDt,
-                place: dog.happenPlace,
-            },
-            color: dog.colorCd,
-            birth: dog.age,
-            weight: dog.weight,
-            sex: dog.sexCd,
-            neuter: dog.neuterYn,
-            memo: dog.specialMark,
-            notice: {
-                code: dog.noticeNo,
-                date_start: dog.noticeSdt,
-                date_end: dog.noticeEdt,
-            },
-            careCenter: {
-                name: dog.careNm,
-                phone: dog.careTel,
-                address: dog.careAddr,
-            },
-        }));
+    // // 동물보호관리센터 메인 유기견 데이터 생성 (값 매핑)
+    // async createMany(createDogDto: CreateDogDto[]): Promise<Dog[]> {
+    //     const createDogs = createDogDto.map((dog) => ({
+    //         id: dog.desertionNo,
+    //         state: dog.processState,
+    //         img_url: dog.popfile,
+    //         found: {
+    //             date: dog.happenDt,
+    //             place: dog.happenPlace,
+    //         },
+    //         color: dog.colorCd,
+    //         birth: dog.age,
+    //         weight: dog.weight,
+    //         sex: dog.sexCd,
+    //         neuter: dog.neuterYn,
+    //         memo: dog.specialMark,
+    //         notice: {
+    //             code: dog.noticeNo,
+    //             date_start: dog.noticeSdt,
+    //             date_end: dog.noticeEdt,
+    //         },
+    //         careCenter: {
+    //             name: dog.careNm,
+    //             phone: dog.careTel,
+    //             address: dog.careAddr,
+    //         },
+    //     }));
 
-        return await this.dogModel.insertMany(createDogs);
-    }
+    //     return await this.dogModel.insertMany(createDogs);
+    // }
 }

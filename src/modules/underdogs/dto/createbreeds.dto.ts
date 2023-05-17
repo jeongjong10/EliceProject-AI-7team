@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class CreateDogBreeds {
+export class CreateBreeds {
     @IsString()
     breeds: String; // (품종명) -> breedName
 

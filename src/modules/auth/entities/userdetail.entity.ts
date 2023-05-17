@@ -1,4 +1,4 @@
-import { Employed, Hasdog } from 'src/constants/auth/user.enum';
+import { Employed, Hasdog } from '../../../constants/auth/user.enum';
 import {
     Column,
     Entity,

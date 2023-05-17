@@ -1,4 +1,4 @@
-import { State } from 'src/constants/dog/dog';
+import { State } from '../../../constants/dog/dog.enum';
 import {
     Column,
     CreateDateColumn,
@@ -8,7 +8,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { UnderDogs } from 'src/modules/underdogs/entities/underdog.entity';
+import { UnderDogs } from '../../../modules/underdogs/entities/underdog.entity';
 
 @Entity()
 export class VisitRequest {

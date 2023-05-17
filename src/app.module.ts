@@ -27,14 +27,14 @@ import { Breeds } from './modules/underdogs/entities/breeds.entity';
             cache: true,
         }),
 
-        // MongoDB 연결 모듈
-        MongooseModule.forRootAsync({
-            imports: [ConfigModule],
-            useFactory: async (config: ConfigService) => ({
-                uri: config.get('MONGODB_ADDRESS'),
-            }),
-            inject: [ConfigService],
-        }),
+        // // MongoDB 연결 모듈
+        // MongooseModule.forRootAsync({
+        //     imports: [ConfigModule],
+        //     useFactory: async (config: ConfigService) => ({
+        //         uri: config.get('MONGODB_ADDRESS'),
+        //     }),
+        //     inject: [ConfigService],
+        // }),
 
         // PostgreSQL 연결
         TypeOrmModule.forRootAsync({
@@ -64,7 +64,7 @@ import { Breeds } from './modules/underdogs/entities/breeds.entity';
         }),
 
         // 생성한 모듈 추가
-        DogsModule,
+        // DogsModule,
         AuthModule,
         UnderdogsModule,
     ],
