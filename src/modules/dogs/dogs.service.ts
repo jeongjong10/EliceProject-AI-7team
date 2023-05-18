@@ -19,12 +19,6 @@ export class DogsService {
     // 사용자 이미지 검색 유기견 목록 조회
     async searchDogList(searchDogListDto: SearchDogListDto): Promise<Dog[]> {
         const { limit, skip, sex } = searchDogListDto;
-        console.log(searchDogListDto);
-
-        delete searchDogListDto.limit;
-        delete searchDogListDto.skip;
-        // delete searchDogListDto.breeds;
-        console.log(searchDogListDto);
 
         return await this.dogModel.find({ sex }).skip(skip).limit(limit);
     }
