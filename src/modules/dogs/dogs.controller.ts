@@ -31,7 +31,7 @@ export class DogsController {
             });
     }
 
-    // 사용자 이미지 검색 유기견 목록 조회
+    // 사용자 이미지 검색 유기견 목록 조회 (성별로 전환)
     @Get('/search')
     async searchDogListController(@Query() searchDogListDto: SearchDogListDto) {
         // 리턴문으로 반환

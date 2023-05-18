@@ -2,12 +2,12 @@ import { IsDefined, IsNumber, IsString } from 'class-validator';
 import { PagenationDogDto } from './pagenation-dog.dto';
 
 export class SearchDogListDto extends PagenationDogDto {
-    @IsDefined()
-    @IsString({ each: true })
-    breeds: String[];
+    // @IsDefined()
+    // @IsString({ each: true })
+    // breeds: String[];
 
     @IsString()
-    sex?: String;
+    sex: String;
 
     @IsNumber()
     birth?: Number;
