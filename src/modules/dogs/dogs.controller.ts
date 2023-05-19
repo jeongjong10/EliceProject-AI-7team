@@ -1,9 +1,19 @@
-import { Controller, Get, Post, Body, Res, Param, Query } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Res,
+    Param,
+    Query,
+    Patch,
+} from '@nestjs/common';
 import { DogsService } from './dogs.service';
 import { CreateDogDto } from './dto/create-dog.dto';
 import { Dog } from './models/dog.schema';
 import { SearchDogListDto } from './dto/search-doglist.dto';
 import { PagenationDogDto } from './dto/pagenation-dog.dto';
+import { CreateRequestDto } from './dto/create-request.dto';
 
 // 컨트롤러 파일 (라우터)
 
@@ -14,28 +24,25 @@ export class DogsController {
 
     // 유기견 전체 목록 조회
     @Get('/')
-    async getDogListController(
-        @Res() res,
-        @Query() pagenationDogDto: PagenationDogDto
-    ) {
+    getDogList(@Res() res, @Query() pagenationDogDto: PagenationDogDto) {
         // (then, cathch문 사용)
         this.DogsService.findDogsList(pagenationDogDto)
-            .then((dogList) =>
+            .then((dogList) => {
+                const cnt = dogList.length;
                 res.json({
-                    message: `(전체 목록) 유기견 ${pagenationDogDto.limit}개 조회 성공`,
+                    message: `(전체 목록) 유기견 ${cnt}개 조회 성공`,
                     data: dogList,
-                })
-            )
+                });
+            })
             .catch((err) => {
                 res.json(err);
             });
     }
 
-    // 사용자 이미지 검색 유기견 목록 조회 (성별로 전환)
+    // 사용자 이미지 검색 유기견 목록 조회
     @Get('/search')
-    async searchDogListController(@Query() searchDogListDto: SearchDogListDto) {
+    async searchDogList(@Query() searchDogListDto: SearchDogListDto) {
         // 리턴문으로 반환
-        console.log(searchDogListDto);
         const searchedDogList = await this.DogsService.searchDogList(
             searchDogListDto
         );
@@ -47,7 +54,7 @@ export class DogsController {
 
     // 특정 유기견 id 검색 및 조회
     @Get('/:id')
-    async getDogController(@Res() res, @Param('id') dog_id: String) {
+    async getDog(@Res() res, @Param('id') dog_id: String) {
         // res로 반환
         const dog: Dog = await this.DogsService.findDog(dog_id);
         res.json({
@@ -56,17 +63,42 @@ export class DogsController {
         });
     }
 
+    // 방문 예약 신청 데이터 생성
+    @Post('visitrequest')
+    async createRequest(@Body() createRequest: CreateRequestDto, @Res() res) {
+        console.log('Controller : ', createRequest);
+        const createdRequest = await this.DogsService.createRequest(
+            createRequest
+        );
+        res.json({
+            message: '방문 신청 데이터 입력 성공',
+            data: createdRequest,
+        });
+    }
+
     // 유기견 데이터 입력 (Flask -> Nest)
     @Post('upload')
-    async uploadDataController(
-        @Body() createDogData: CreateDogDto[],
-        @Res() res
-    ) {
+    async uploadData(@Body() createDogData: CreateDogDto[], @Res() res) {
         console.log('Controller : ', createDogData);
         const createdDog = await this.DogsService.createMany(createDogData);
         res.json({
             message: '유기견 데이터 입력 성공',
             data: createdDog,
         });
+    }
+
+    // 믹스견 품종 데이터 추출 및 데이터 업데이트 (Nest -> Flask -> MongDB)
+    @Patch('/breeds/admin')
+    generateBreeds(@Res() res) {
+        this.DogsService.patchMany()
+            .then((dogsBreeds) => {
+                res.json({
+                    message: '품종 데이터 생성 성공?',
+                    data: dogsBreeds,
+                });
+            })
+            .catch((err) => {
+                res.json({ err: err });
+            });
     }
 }

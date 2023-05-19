@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import * as mongoose from 'mongoose';
 import { HydratedDocument } from 'mongoose';
-import { DogBreeds } from './dogbreeds.shema';
+// import { DogBreeds } from './dogbreeds.shema';
 
 export type DogDocument = HydratedDocument<Dog>;
 
@@ -27,18 +26,24 @@ export class Dog {
         place: String; // 발견장소(happenPlace)
     };
 
-    // DogBreeds 타입의 breeds 값을 여러개 가지기 위한 정의, 인공지능 모델의 반환값 저장 예정
+    // // DogBreeds 타입의 breeds 값을 여러개 가지기 위한 정의, 인공지능 모델의 반환값 저장 예정
     @Prop({
         index: true,
         required: false,
-        type: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'DogBreeds',
-            },
-        ],
     })
-    breeds?: DogBreeds[];
+    breeds?: String[];
+
+    // @Prop({
+    //     index: true,
+    //     required: false,
+    //     type: [
+    //         {
+    //             type: mongoose.Schema.Types.ObjectId,
+    //             ref: 'DogBreeds',
+    //         },
+    //     ],
+    // })
+    // breeds?: DogBreeds[];
 
     @Prop({ required: true })
     color: String; // 색상(colorCd)
