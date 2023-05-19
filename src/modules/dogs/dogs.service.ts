@@ -29,7 +29,10 @@ export class DogsService {
     async searchDogList(searchDogListDto: SearchDogListDto): Promise<Dog[]> {
         const { limit, skip, breeds } = searchDogListDto;
 
-        return await this.dogModel.find({ breeds }).skip(skip).limit(limit);
+        return await this.dogModel
+            .find({ breeds: decodeURI(breeds) })
+            .skip(skip)
+            .limit(limit);
     }
 
     // 특정 유기견 정보 조회
@@ -81,7 +84,6 @@ export class DogsService {
         // 2. 조회된 유기견의 img_url을 Flask 서버로 전송 axios
         // 3. 반환되는 데이터를 breeds[]에 저장 update
         const dogs = await this.dogModel.find();
-        console.log('find 성공', dogs[1]);
 
         for (const dog of dogs) {
             const response = await firstValueFrom(
@@ -97,5 +99,53 @@ export class DogsService {
             );
         }
         return dogs[1];
+        // const chunkSize = 100; // 한 번에 처리할 개수
+        // const totalChunks = Math.ceil(dogs.length / chunkSize); // 전체 청크 수
+
+        // for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+        //     const start = chunkIndex * chunkSize;
+        //     const end = start + chunkSize;
+        //     const chunkDogs = dogs.slice(start, end); // 청크에 해당하는 개만 추출
+
+        //     const breedPromises = chunkDogs.map(async (dog, dogIndex) => {
+        //         const response = await firstValueFrom(
+        //             this.httpservice.post(
+        //                 'http://127.0.0.1:5000/breedsAI/admin',
+        //                 {
+        //                     img_url: dog.img_url,
+        //                 }
+        //             )
+        //         );
+        //         return {
+        //             data: response.data.data,
+        //             index: dogIndex,
+        //         };
+        //     });
+
+        //     const breedsListWithIndex = await Promise.all(breedPromises);
+
+        //     for (let i = 0; i < chunkDogs.length; i++) {
+        //         const dog = chunkDogs[i];
+        //         const breedsWithIndex = breedsListWithIndex[i];
+
+        //         if (breedsWithIndex && breedsWithIndex.data) {
+        //             await this.dogModel.updateOne(
+        //                 { id: dog.id },
+        //                 { breeds: breedsWithIndex.data }
+        //             );
+        //         } else {
+        //             console.error(
+        //                 `Error occurred for dog with index ${breedsWithIndex.index} in chunk ${chunkIndex}`
+        //             );
+        //         }
+        //     }
+
+        //     console.log(
+        //         `Processed chunk ${chunkIndex + 1} out of ${totalChunks}`
+        //     );
+        //     console.log(`Last dog in chunk:`, chunkDogs[chunkDogs.length - 1]);
+
+        //     return;
+        // }
     }
 }

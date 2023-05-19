@@ -4,7 +4,7 @@ import { PagenationDogDto } from './pagenation-dog.dto';
 export class SearchDogListDto extends PagenationDogDto {
     @IsDefined()
     @IsString()
-    breeds: String;
+    breeds: string;
 
     @IsString()
     sex?: String;
