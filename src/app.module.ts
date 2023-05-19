@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { DogsModule } from './modules/dogs/dogs.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { User } from './modules/auth/entities/user.entity';
@@ -13,6 +11,7 @@ import { Found } from './modules/underdogs/entities/found.entity';
 import { UserDetail } from './modules/auth/entities/userdetail.entity';
 import { VisitRequest } from './modules/auth/entities/visitrequest.entity';
 import { Breeds } from './modules/underdogs/entities/breeds.entity';
+import { CacheModule } from '@nestjs/cache-manager';
 
 // 응용 프로그램의 루트 모듈
 // 데코레이터 : 클래스를 필수 메타데이터와 연결하고, 라우팅 맵을 만들게 한다.
@@ -27,14 +26,7 @@ import { Breeds } from './modules/underdogs/entities/breeds.entity';
             cache: true,
         }),
 
-        // // MongoDB 연결 모듈
-        // MongooseModule.forRootAsync({
-        //     imports: [ConfigModule],
-        //     useFactory: async (config: ConfigService) => ({
-        //         uri: config.get('MONGODB_ADDRESS'),
-        //     }),
-        //     inject: [ConfigService],
-        // }),
+        CacheModule.register(),
 
         // PostgreSQL 연결
         TypeOrmModule.forRootAsync({
@@ -64,7 +56,6 @@ import { Breeds } from './modules/underdogs/entities/breeds.entity';
         }),
 
         // 생성한 모듈 추가
-        // DogsModule,
         AuthModule,
         UnderdogsModule,
     ],
