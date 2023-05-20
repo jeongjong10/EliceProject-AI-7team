@@ -6,8 +6,13 @@ import { ConfigService } from '@nestjs/config';
 // **listen을 보아 서버를 오픈하는 시작 파일**
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
-    app.enableCors();
+    const app = await NestFactory.create(AppModule, { cors: true });
+    app.enableCors({
+        origin: '*',
+        methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+        preflightContinue: false,
+        optionsSuccessStatus: 204,
+    });
 
     const configService = app.get(ConfigService);
     await app.listen(configService.get('SERVER_PORT'));
