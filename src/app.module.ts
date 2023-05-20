@@ -2,9 +2,7 @@ import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DogsModule } from './modules/dogs/dogs.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-
+import { CacheModule } from '@nestjs/cache-manager';
 // 응용 프로그램의 루트 모듈
 // 데코레이터 : 클래스를 필수 메타데이터와 연결하고, 라우팅 맵을 만들게 한다.
 
@@ -18,6 +16,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             cache: true,
         }),
 
+        // 인메모리 캐시
+        CacheModule.register({
+            isGlobal: true,
+        }),
+
         // MongoDB 연결 모듈
         MongooseModule.forRootAsync({
             imports: [ConfigModule],
@@ -27,25 +30,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
             inject: [ConfigService],
         }),
 
-        // // PostgreSQL 연결
-        // TypeOrmModule.forRootAsync({
-        //     imports: [ConfigModule],
-        //     useFactory: async (config: ConfigService) => ({
-        //         type: 'postgres',
-        //         host: config.get('POSTGRESQL_HOST'),
-        //         port: config.get('POSTGRESQL_PORT'),
-        //         username: config.get('POSTGRESQL_USERNAME'),
-        //         password: config.get<number>('POSTGRESQL_PASSWORD'),
-        //         database: config.get('POSTRESQL_NAME'),
-        //         entities: [],
-        //         synchronize: true,
-        //     }),
-        //     inject: [ConfigService],
-        // }),
-
         // 생성한 모듈 추가
         DogsModule,
-        // AuthModule,
     ],
 
     // 현재 모듈에서 구현한 컨트롤러 등록

@@ -1,5 +1,5 @@
 import { Model } from 'mongoose'; // 몽구스 모델 임포트
-import { Injectable } from '@nestjs/common'; // 네스트 의존성 주입 데코레이터 임포트
+import { Injectable, Inject } from '@nestjs/common'; // 네스트 의존성 주입 데코레이터 임포트
 import { InjectModel } from '@nestjs/mongoose'; // 몽구스 의존성 주입 데코레이터 임포트
 import { Dog } from './models/dog.schema';
 import { VisitRequest } from './models/visitRequest.schema';
@@ -9,6 +9,8 @@ import { PagenationDogDto } from './dto/pagenation-dog.dto';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { CreateRequestDto } from './dto/create-request.dto';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class DogsService {
@@ -16,23 +18,41 @@ export class DogsService {
         @InjectModel(Dog.name) private dogModel: Model<Dog>,
         @InjectModel(VisitRequest.name)
         private RequestModel: Model<VisitRequest>,
+        @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
         private readonly httpservice: HttpService
     ) {}
 
     // 유기견 전체 목록 조회
     async findDogsList(pagenationDogDto: PagenationDogDto): Promise<Dog[]> {
         const { limit, skip } = pagenationDogDto;
-        return await this.dogModel.find().skip(skip).limit(limit);
+        return await this.dogModel
+            .find()
+            .skip(skip)
+            .limit(limit)
+            .sort({ 'notice.date_start': -1 });
     }
 
     // 사용자 이미지 검색 유기견 목록 조회
+    // 사용자 보유한 '품종키워드'에 대한 데이터를 3분간(180초) 캐싱
     async searchDogList(searchDogListDto: SearchDogListDto): Promise<Dog[]> {
         const { limit, skip, breeds } = searchDogListDto;
 
-        return await this.dogModel
+        // 캐시 확인
+        const cachedData: Dog[] = await this.cacheManager.get(
+            breeds.toString()
+        );
+        if (cachedData) {
+            return cachedData;
+        }
+
+        // 캐시 없으면 데이터 조회
+        const searchedDogList = await this.dogModel
             .find({ breeds: decodeURI(breeds) })
             .skip(skip)
-            .limit(limit);
+            .limit(limit)
+            .sort({ 'notice.date_start': -1 });
+        this.cacheManager.set(breeds.toString(), searchedDogList, 180);
+        return searchedDogList;
     }
 
     // 특정 유기견 정보 조회
@@ -79,73 +99,23 @@ export class DogsService {
     }
 
     // 품종 정보 추출 후 데이터 업데이트 (Nest -> Flask -> Nest)
+    // 1. 데이터베이스에 존재하는 유기견을 하나씩 조회 find
+    // 2. 조회된 유기견의 img_url을 Flask 서버로 전송 axios
+    // 3. 반환되는 데이터를 breeds[]에 저장 update
     async patchMany() {
-        // 1. 데이터베이스에 존재하는 유기견을 하나씩 조회 find
-        // 2. 조회된 유기견의 img_url을 Flask 서버로 전송 axios
-        // 3. 반환되는 데이터를 breeds[]에 저장 update
         const dogs = await this.dogModel.find();
-
         for (const dog of dogs) {
             const response = await firstValueFrom(
                 this.httpservice.post('http://127.0.0.1:5000/breedsAI/admin', {
                     img_url: dog.img_url,
                 })
             );
-            console.log(response.data.data);
             const breedsList = response.data.data;
             await this.dogModel.updateOne(
                 { id: dog.id },
                 { breeds: breedsList }
             );
         }
-        return dogs[1];
-        // const chunkSize = 100; // 한 번에 처리할 개수
-        // const totalChunks = Math.ceil(dogs.length / chunkSize); // 전체 청크 수
-
-        // for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-        //     const start = chunkIndex * chunkSize;
-        //     const end = start + chunkSize;
-        //     const chunkDogs = dogs.slice(start, end); // 청크에 해당하는 개만 추출
-
-        //     const breedPromises = chunkDogs.map(async (dog, dogIndex) => {
-        //         const response = await firstValueFrom(
-        //             this.httpservice.post(
-        //                 'http://127.0.0.1:5000/breedsAI/admin',
-        //                 {
-        //                     img_url: dog.img_url,
-        //                 }
-        //             )
-        //         );
-        //         return {
-        //             data: response.data.data,
-        //             index: dogIndex,
-        //         };
-        //     });
-
-        //     const breedsListWithIndex = await Promise.all(breedPromises);
-
-        //     for (let i = 0; i < chunkDogs.length; i++) {
-        //         const dog = chunkDogs[i];
-        //         const breedsWithIndex = breedsListWithIndex[i];
-
-        //         if (breedsWithIndex && breedsWithIndex.data) {
-        //             await this.dogModel.updateOne(
-        //                 { id: dog.id },
-        //                 { breeds: breedsWithIndex.data }
-        //             );
-        //         } else {
-        //             console.error(
-        //                 `Error occurred for dog with index ${breedsWithIndex.index} in chunk ${chunkIndex}`
-        //             );
-        //         }
-        //     }
-
-        //     console.log(
-        //         `Processed chunk ${chunkIndex + 1} out of ${totalChunks}`
-        //     );
-        //     console.log(`Last dog in chunk:`, chunkDogs[chunkDogs.length - 1]);
-
-        //     return;
-        // }
+        return;
     }
 }
